@@ -9,4 +9,4 @@ def index():
 
 @talks.route('user/<username>')
 def user(username):
-    return render_template('talks/user.html', username=username)
+    return render_template('talks/user.html', username=username) #sending argument username to tmeplate user.html

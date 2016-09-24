@@ -6,6 +6,6 @@ def create_app(config_name):                            #creating app in functio
     app.config.from_object(config[config_name])
 
     from .talks import talks as talks_blueprint
-    app.register_blueprint(talks_blueprint)
+    app.register_blueprint(talks_blueprint)         #bring the routes from bprint to app
 
     return app
