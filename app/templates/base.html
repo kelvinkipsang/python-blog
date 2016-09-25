@@ -2,9 +2,15 @@
 
 {% extends "bootstrap/base.html" %}
 
-{% block title %}Talks{% endblock %}
-{% block navbar %}
+{% block title %}
+<a class="navbar-brand" href="{{ url_for('talks.index') }}">Talks</a>
+{% endblock %}
 
+{% block navbar %}
+<ul class="nav navbar-nav">
+    <li><a href="{{ url_for('talks.index') }}">Home</a></li>
+    <li><a href="{{ url_for('talks.user', username='miguel') }}">Profile</a></li>
+</ul>
 
 {% endblock %}
 {% block content %}
