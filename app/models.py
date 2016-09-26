@@ -27,5 +27,5 @@ class User(db.Model):
     def password(self, password):                                       #runs hashing fnt storing it in paa hash attr(column in db)
         self.password_hash = generate_password_hash(password)           #trans by werkzeug
 
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    def verify_password(self, password):                                #called when user logs in
+        return check_password_hash(self.password_hash, password)        #takes plain text,calls werks function,applies trans fnt to plain txt,compares the hashes
