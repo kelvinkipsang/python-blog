@@ -6,8 +6,8 @@ class Config:
 basedir = os.path.abspath(os.path.dirname(__file__))
 class DevelopmentConfig(Config):
     SECRET_KEY = os.environ.get("SECRET_KEY") or "top secret key"   #if it isnt set in environment
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \   #setting paths to dbs
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')         #setting paths to dbs
 
 class TestingConfig(Config):
     TESTING = True
