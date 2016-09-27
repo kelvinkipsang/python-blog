@@ -13,16 +13,16 @@ manager = Manager(app)
 def adduser(email, username, admin=False):      #creates new command using flsk script,using name of fnt,checks arg with no default become positional args
     """Register a new user."""
     from getpass import getpass
-    password = getpass()                           #prompt to get pass
+    password = getpass()                           #prompt to get pass (from standard module getpass)
     password2 = getpass(prompt='Confirm: ')
     if password != password2:
         import sys
         sys.exit('Error: passwords do not match.')
-    db.create_all()
-    user = User(email=email, username=username, password=password,
+    db.create_all()                                 #creates db
+    user = User(email=email, username=username, password=password,  #make user,pass all info and admin flag
                 is_admin=admin)
-    db.session.add(user)
-    db.session.commit()
+    db.session.add(user)                            #add to session,like a db handle
+    db.session.commit()                             #call that makes changes effective
     print('User {0} was registered successfully.'.format(username))
 
 if __name__ == '__main__':
