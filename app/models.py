@@ -16,8 +16,7 @@ class User(db.Model):
     bio = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
-    talks = db.relationship('Talk', lazy='dynamic', backref='author')
-    comments = db.relationship('Comment', lazy='dynamic', backref='author')
+
 
     @property                                   #made it pprty so that i can say user.password=? so that it looks like a member var
     def password(self):

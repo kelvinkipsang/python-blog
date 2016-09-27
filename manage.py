@@ -7,8 +7,7 @@ from app.models import User
 app = create_app(os.getenv('FLASK_CONFIG') or 'default') #get environment configuration if set else use default configuration(DevelopmentConfig)
 manager = Manager(app)
 
-if __name__ == '__main__':
-    manager.run()
+
 
 @manager.command
 def adduser(email, username, admin=False):      #creates new command using flsk script,using name of fnt,checks arg with no default become positional args
@@ -25,3 +24,6 @@ def adduser(email, username, admin=False):      #creates new command using flsk 
     db.session.add(user)
     db.session.commit()
     print('User {0} was registered successfully.'.format(username))
+
+if __name__ == '__main__':
+    manager.run()
