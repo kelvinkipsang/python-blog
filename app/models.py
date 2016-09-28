@@ -8,6 +8,23 @@ from flask_login import login_user
 # from ..models import user
 
 
+
+class Talk(db.Model):
+    __tablename__ = 'talks'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Text)
+    slides = db.Column(db.Text())
+    video = db.Column(db.Text())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    venue = db.Column(db.String(128))
+    venue_url = db.Column(db.String(128))
+    date = db.Column(db.DateTime())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))      #
+
+
+
+
 class User(UserMixin, db.Model):            #f-login uses usermixn class,which provides default implementations for get id,is anonymous,is active,is auth
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +39,7 @@ class User(UserMixin, db.Model):            #f-login uses usermixn class,which p
     bio = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
+    talks = db.relationship('Talk', backref='author', lazy='dynamic')  #lazy makes talks query not list
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
