@@ -1,6 +1,6 @@
 from flask import render_template
 from . import talks
-
+from ..models import User
 #instead of creating a global app,im creating a global blueprint and placing routes in it
 
 @talks.route('/')
@@ -9,4 +9,7 @@ def index():
 
 @talks.route('/user/<username>')
 def user(username):
-    return render_template('talks/user.html', username=username) #sending argument username to tmeplate user.html
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('talks/user.html', user=user) #sending argument user to tmeplate user.html
+
+
