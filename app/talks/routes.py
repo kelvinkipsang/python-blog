@@ -1,6 +1,6 @@
 from flask import render_template, flash
 from . import talks
-from ..models import User
+from ..models import User,Talk
 #instead of creating a global app,im creating a global blueprint and placing routes in it
 from flask_login import  login_required,current_user,redirect,url_for
 from .forms import ProfileForm, TalkForm
@@ -9,11 +9,14 @@ from .. import db
 
 @talks.route('/')
 def index():
-    return render_template('talks/index.html')
+    talk_list = Talk.query.order_by(Talk.date.desc()).all()
+    return render_template('talks/index.html', talks=talk_list)
 
 @talks.route('/user/<username>')
 def user(username):
+
     user = User.query.filter_by(username=username).first_or_404()
+    talk_list = user.talks.order_by(Talk.date.desc()).all()         #from rship in models
     return render_template('talks/user.html', user=user) #sending argument user to tmeplate user.html
 
 
