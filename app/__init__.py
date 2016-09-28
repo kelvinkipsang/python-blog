@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-bootstrap =Bootstrap()      #create instance as a global var
+bootstrap = Bootstrap()      #create instance as a global var
 
 from flask_login import LoginManager
 login_manager = LoginManager()

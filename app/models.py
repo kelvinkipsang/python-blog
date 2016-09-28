@@ -5,7 +5,8 @@ from flask_login import UserMixin
 
 from flask import render_template,redirect, request, url_for, flash
 from flask_login import login_user
-from ..models import user
+# from ..models import user
+
 
 class User(UserMixin, db.Model):            #f-login uses usermixn class,which provides default implementations for get id,is anonymous,is active,is auth
     __tablename__ = 'users'
@@ -38,6 +39,7 @@ class User(UserMixin, db.Model):            #f-login uses usermixn class,which p
 def user_loader(user_id):                   #we provide function that does that work,flask knows how to load users
     return User.query.get(int(user_id))     #comes as unicode
 
+from . import auth
 @auth.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
