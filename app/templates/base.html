@@ -42,3 +42,8 @@
     </div>
 
 {% endblock %}
+
+{% blockscripts %}
+{{ super() }}
+{{ moment.include_moment() }}       <!-- function that moments provides that incorporates js scripts into your code-->
+{% endblock %}
