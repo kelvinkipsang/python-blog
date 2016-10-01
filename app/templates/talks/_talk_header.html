@@ -1,3 +1,6 @@
+<h2><a href="{{ url_for('talks.talk', id=talk.id) }}">{{ talk.title }}</a></h2>
+<h3>{{ talk.description }}</h3>
+
 <div class="_talk_header">
     <h2>{{ talk.title }}</h2><h3>{{ talk.description }}</h3>
     <p>
@@ -8,7 +11,7 @@
         {% else %}
             {{ talk.venue }}
         {% endif %}
+        on {{ moment(talk.date, local=True).format('LL') }} <!--ll styles-->
     </p>
 </div>
 
-on {{ moment(talk.date, local=True).format('LL') }}

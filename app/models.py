@@ -74,6 +74,7 @@ def user_loader(user_id):                   #we provide function that does that 
 
 
 from . import auth
+
 @auth.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()

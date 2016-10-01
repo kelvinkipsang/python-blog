@@ -1,4 +1,4 @@
-from flask import render_template, flash
+from flask import render_template, flash,abort,request, current_app
 from . import talks
 from ..models import User,Talk
 #instead of creating a global app,im creating a global blueprint and placing routes in it
@@ -16,8 +16,8 @@ def index():
 def user(username):
 
     user = User.query.filter_by(username=username).first_or_404()
-    talk_list = user.talks.order_by(Talk.date.desc()).all()         #from rship in models
-    return render_template('talks/user.html', user=user) #sending argument user to tmeplate user.html
+    talk_list = user.talks.order_by(Talk.date.desc()).all()         #from rship in models...loading user from db
+    return render_template('talks/user.html', user=user, talks=talk_list) #sending argument user to tmeplate user.html
 
 
 @talks.route('/profile', methods=['GET', 'POST'])
@@ -55,4 +55,25 @@ def new_talk():
         db.session.commit()
         flash('The talk was added successfully.')
         return redirect(url_for('.index'))
+    return render_template('talks/edit_talk.html', form=form)
+
+@talks.route('talk/<int:id>')
+def talk(id):
+    talk = Talk.query.get_or_404(id)
+    return render_template('talks/talk.html', talk=talk)
+
+@talks.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_talk(id):
+    talk = Talk.query.get_or_404(id)
+    if not current_user.is_admin and talk.author != current_user:
+        abort(403)
+    form = TalkForm()
+    if form.validate_on_submit():
+        form.to_model(talk)
+        db.session.add(talk)
+        db.session.commit()
+        flash('The talk was updated successfully.')
+        return redirect(url_for('.talk', id=talk.id))
+    form.from_model(talk)
     return render_template('talks/edit_talk.html', form=form)

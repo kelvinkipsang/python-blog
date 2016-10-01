@@ -1,18 +1,38 @@
 
 
 {% extends "base.html" %}
-{% include "talks/_talks.html %}
+
 
 {% block page_content %}
 
+    {% if current_user == user %}
 
-<div class="page-header">
+    <div class="page-header">
+
+
+
         <h1>hello,  {{ user.username }}</h1>
-</div>
-<div class="page-header user-profile">
-    <div class="user-avatar"><img src="{{ user.gravatar(128) }}"></div>
-    {% if current_user == user %}<a class="btn btn-default pull-right" href="{{ url_for('talks.profile') }}">Edit Profile</a>{% endif %}
-    <h1>{{ user.username }}</h1>
+
+    </div>
+
+
+        <div class="page-header user-profile">
+
+            <div class="user-avatar">
+
+                <img src="{{ user.gravatar(128) }}">
+
+            </div>
+
+            <h1>{{ user.username }}</h1>
+
+        </div>
+
+        <a class="btn btn-default pull-right" href="{{ url_for('talks.profile') }}">Edit Profile</a>
+{% include "talks/_talks.html %}
+    {% endif %}
+
+
 
 {% endblock %}
 
