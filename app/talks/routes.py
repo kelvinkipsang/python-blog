@@ -5,6 +5,7 @@ from ..models import User,Talk
 from flask_login import  login_required,current_user,redirect,url_for
 from .forms import ProfileForm, TalkForm
 from .. import db
+from .forms import ProfileForm, TalkForm, CommentForm, PresenterCommentForm
 
 
 @talks.route('/')
@@ -77,3 +78,35 @@ def edit_talk(id):
         return redirect(url_for('.talk', id=talk.id))
     form.from_model(talk)
     return render_template('talks/edit_talk.html', form=form)
+
+@talks.route('/talk/<int:id>', methods=['GET', 'POST'])
+def talk(id):
+    talk = Talk.query.get_or_404(id)
+    comment = None
+    if current_user.is_authenticated():
+        form = PresenterCommentForm()
+        if form.validate_on_submit():
+            comment = Comment(body=form.body.data,
+                              talk=talk,
+                              author=current_user,
+                              notify=False, approved=True)
+    else:
+        form = CommentForm()
+        if form.validate_on_submit():
+            comment = Comment(body=form.body.data,
+                              talk=talk,
+                              author_name=form.name.data,
+                              author_email=form.email.data,
+                              notify=form.notify.data, approved=False)
+
+    if comment:
+        db.session.add(comment)
+        db.session.commit()
+        if comment.approved:
+            send_comment_notification(comment)
+            flash('Your comment has been published.')
+        else:
+            send_author_notification(talk)
+            flash('Your comment will be published after it is reviewed by '
+                  'the presenter.')
+        return redirect(url_for('.talk', id=talk.id) + '#top')

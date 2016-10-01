@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% block page_content %}
 <div class="page-header">
     {% include "talks/_talk_header.html" %}
@@ -15,4 +17,18 @@
     </div>
     {% endif %}
 </div>
+{% if comments %}
+    <h3 id="comments">Comments</h3>
+    {% include "talks/_comments.html" %}
+{% endif %}
+<h3 id="comment-form">Write a comment</h3>
+{{ wtf.quick_form(form, action='#comment-form') }}
+
+
+
+{% endblock %}
+
+{% blockscripts %}
+{{ super() }}
+{{ moment.include_pagedown() }}       <!-- function that pagedown provides that incorporates js scripts into your code-->
 {% endblock %}

@@ -20,7 +20,8 @@ class Talk(db.Model):
     venue = db.Column(db.String(128))
     venue_url = db.Column(db.String(128))
     date = db.Column(db.DateTime())
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))      #
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comments = db.relationship('Comment', lazy='dynamic', backref='talk')
 
 
 
@@ -40,6 +41,7 @@ class User(UserMixin, db.Model):            #f-login uses usermixn class,which p
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     talks = db.relationship('Talk', backref='author', lazy='dynamic')  #lazy makes talks query not list
+    comments = db.relationship('Comment', lazy='dynamic', backref='author')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -88,3 +90,30 @@ def login():
         return redirect(request.args.get('next') or url_for('talks.index'))     #redirects to main bprint index or the original page the user was visiting
 
     return render_template('auth/login.html', form=form)
+
+from markdown import markdown
+import bleach
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)           #markdown source
+    body_html = db.Column(db.Text)      #html gen source
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_name = db.Column(db.String(64))
+    author_email = db.Column(db.String(64))
+    notify = db.Column(db.Boolean, default=True)
+    approved = db.Column(db.Boolean, default=False)
+    talk_id = db.Column(db.Integer, db.ForeignKey('talks.id'))
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):                #funtion takes value,html
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',  #uses bleach to filter out tags not specified
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        target.body_html = bleach.linkify(bleach.clean(                     #stores it here
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)   #sqlalchemy calls
