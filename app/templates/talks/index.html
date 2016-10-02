@@ -3,14 +3,27 @@
 {% extends "base.html" %}
 
 {% block page_content %}
+{% include "talks/_talks.html %}
 {% if current_user.is_authenticated %}
 
     <li><a href="{{ url_for('talks.user', username=current_user.username) }}">Profile</a></li>
     <h1> hello, {{current_user.username}} </h1>
 
-{% include "talks/_talks.html %}
+
 {% endif %}
 
+{% if talks %}
+<ul class="pager">
+    {% if pagination.has_prev %}
+    <li class="previous"><a href="{{ url_for('talks.index', page=pagination.prev_num) }}">&larr; Newer</a></li>
+    {% else %}
+    <li class="previous disabled"><a href="#">&larr; Newer</a></li>
+    {% endif %}
+    {% if pagination.has_next %}
+    <li class="next"><a href="{{ url_for('talks.index', page=pagination.next_num) }}">Older &rarr;</a></li>
+    {% else %}
+    <li class="next disabled"><a href="#">Older &rarr;</a></li>
+    {% endif %}
+</ul>
+{% endif %}
 
-
-{% endblock %}
