@@ -4,6 +4,11 @@ from wtforms.validators import Optional, Length, DataRequired, URL, Email
 from wtforms.fields.html5 import DateField
 from flask.ext.pagedown.fields import PageDownField
 
+class ProfileForm(Form):
+    name = StringField('Name', validators=[Optional(), Length(1, 64)])
+    location = StringField('Location', validators=[Optional(), Length(1, 64)])
+    bio = TextAreaField('Bio')
+    submit = SubmitField('Submit')
 
 class TalkForm(Form):
     title = StringField('Title', validators=[DataRequired(), Length(1, 128)])
@@ -37,14 +42,14 @@ class TalkForm(Form):
 
 
 class PresenterCommentForm(Form):
-    body = PageDownField('Comment', validators=[Required()])
+    body = PageDownField('Comment', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
 class CommentForm(Form):
-    name = StringField('Name', validators=[Required(), Length(1, 64)])
-    email = StringField('Email', validators=[Required(), Length(1, 64),
+    name = StringField('Name', validators=[DataRequired(), Length(1, 64)])
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
                                              Email()])
-    body = PageDownField('Comment', validators=[Required()])
+    body = PageDownField('Comment', validators=[DataRequired()])
     notify = BooleanField('Notify when new comments are posted', default=True)
     submit = SubmitField('Submit')

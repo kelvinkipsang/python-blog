@@ -1,12 +1,12 @@
 from flask import render_template, flash,abort,request, current_app
 from . import talks
-from ..models import User,Talk
+from ..models import User, Talk, Comment, PendingEmail
 #instead of creating a global app,im creating a global blueprint and placing routes in it
 from flask_login import  login_required,current_user,redirect,url_for
-from .forms import ProfileForm, TalkForm
+
 from .. import db
 from .forms import ProfileForm, TalkForm, CommentForm, PresenterCommentForm
-
+from ..email import send_author_notification, send_comment_notification
 
 @talks.route('/')
 def index():
@@ -63,10 +63,7 @@ def new_talk():
         return redirect(url_for('.index'))
     return render_template('talks/edit_talk.html', form=form)
 
-@talks.route('talk/<int:id>')
-def talk(id):
-    talk = Talk.query.get_or_404(id)
-    return render_template('talks/talk.html', talk=talk)
+
 
 @talks.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -83,6 +80,7 @@ def edit_talk(id):
         return redirect(url_for('.talk', id=talk.id))
     form.from_model(talk)
     return render_template('talks/edit_talk.html', form=form)
+
 
 @talks.route('/talk/<int:id>', methods=['GET', 'POST'])
 def talk(id):
@@ -115,6 +113,22 @@ def talk(id):
             flash('Your comment will be published after it is reviewed by '
                   'the presenter.')
         return redirect(url_for('.talk', id=talk.id) + '#top')
+    if talk.author == current_user or \
+            (current_user.is_authenticated() and current_user.is_admin):
+        comments_query = talk.comments
+    else:
+        comments_query = talk.approved_comments()
+    page = request.args.get('page', 1, type=int)
+    pagination = comments_query.order_by(Comment.timestamp.asc()).paginate(
+        page, per_page=current_app.config['COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    headers = {}
+    if current_user.is_authenticated():
+        headers['X-XSS-Protection'] = '0'
+    return render_template('talks/talk.html', talk=talk, form=form,
+                           comments=comments, pagination=pagination), \
+           200, headers
 
 @talks.route('/moderate')
 @login_required
@@ -130,3 +144,13 @@ def moderate_admin():
         abort(403)
     comments = Comment.for_moderation().order_by(Comment.timestamp.asc())
     return render_template('talks/moderate.html', comments=comments)
+
+@talks.route('/unsubscribe/<token>')
+def unsubscribe(token):
+    talk, email = Talk.unsubscribe_user(token)
+    if not talk or not email:
+        flash('Invalid unsubscribe token.')
+        return redirect(url_for('talks.index'))
+    PendingEmail.remove(email)
+    flash('You will not receive any more email notifications about this talk.')
+    return redirect(url_for('talks.talk', id=talk.id))
