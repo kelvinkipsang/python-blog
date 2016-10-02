@@ -110,3 +110,18 @@ def talk(id):
             flash('Your comment will be published after it is reviewed by '
                   'the presenter.')
         return redirect(url_for('.talk', id=talk.id) + '#top')
+
+@talks.route('/moderate')
+@login_required
+def moderate():
+    comments = current_user.for_moderation().order_by(Comment.timestamp.asc())
+    return render_template('talks/moderate.html', comments=comments)
+
+
+@talks.route('/moderate-admin')
+@login_required
+def moderate_admin():
+    if not current_user.is_admin:
+        abort(403)
+    comments = Comment.for_moderation().order_by(Comment.timestamp.asc())
+    return render_template('talks/moderate.html', comments=comments)

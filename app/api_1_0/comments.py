@@ -2,6 +2,7 @@ from flask import jsonify
 from . import api
 from .errors import forbidden, bad_request
 from ..models import Comment
+from .. import db
 
 @api.route('/comments/<int:id>', methods=['PUT'])
 def approve_comment(id):
@@ -22,7 +23,7 @@ def approve_comment(id):
 
 @api.route('/comments/<int:id>', methods=['DELETE'])
 def delete_comment(id):
-    comment = Comment.query.get_or_404(id)
+    comment = Comment.query.get_or_404(id)              #g.user is set in the before request method(tokens)
 
     if comment.talk.author != g.current_user and not g.current_user.is_admin:
         return forbidden('You cannot modify this comment.')

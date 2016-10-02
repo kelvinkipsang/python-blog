@@ -9,22 +9,6 @@ from flask_login import login_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
-class Talk(db.Model):
-    __tablename__ = 'talks'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(128), nullable=False)
-    description = db.Column(db.Text)
-    slides = db.Column(db.Text())
-    video = db.Column(db.Text())
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    venue = db.Column(db.String(128))
-    venue_url = db.Column(db.String(128))
-    date = db.Column(db.DateTime())
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    comments = db.relationship('Comment', lazy='dynamic', backref='talk')
-
-
-
 
 class User(UserMixin, db.Model):            #f-login uses usermixn class,which provides default implementations for get id,is anonymous,is active,is auth
     __tablename__ = 'users'
@@ -86,6 +70,13 @@ class User(UserMixin, db.Model):            #f-login uses usermixn class,which p
     def verify_password(self, password):                                #called when user logs in
         return check_password_hash(self.password_hash, password)        #takes plain text,calls werks function,applies trans fnt to plain txt,compares the hashes
 
+    @staticmethod
+    def for_moderation(self, admin==False):
+        if admin and self.is_admin:
+            return Comment.for_moderation()
+        return Comment.query.join(Talk, Comment.talk_id==Talk.id).\         #all comments in any talks,for talks authred by 1 user
+            filter(Talk.author==self).filter(Comment.approved == False)
+
 @login_manager.user_loader                  #flogin doesnt know anything about our objects,,we give it a user loader callback,so that when it needs to load the user
 def user_loader(user_id):                   #we provide function that does that work,flask knows how to load users
     return User.query.get(int(user_id))     #comes as unicode
@@ -110,6 +101,25 @@ def login():
 from markdown import markdown
 import bleach
 
+
+class Talk(db.Model):
+    __tablename__ = 'talks'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Text)
+    slides = db.Column(db.Text())
+    video = db.Column(db.Text())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    venue = db.Column(db.String(128))
+    venue_url = db.Column(db.String(128))
+    date = db.Column(db.DateTime())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comments = db.relationship('Comment', lazy='dynamic', backref='talk')
+
+    def approved_comments(self):
+        return self.comments.filter_by(approved=True)
+
+
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
@@ -133,3 +143,7 @@ class Comment(db.Model):
             tags=allowed_tags, strip=True))
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)   #sqlalchemy calls
+
+    @staticmethod
+    def for_moderation():
+        return Comment.query.filter_by(Comment.approved==False)
