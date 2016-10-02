@@ -1,10 +1,11 @@
-from flask import render_template,flash, redirect, url_for
-from . import auth
+from flask import render_template,flash, redirect, url_for,request
 from .forms import LoginForm
 
 
 
 from . import auth
+from ..models import User
+# from flask_login import login_user
 
 @auth.route('/login', methods = ['GET', 'POST'])
 def login():

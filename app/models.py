@@ -5,8 +5,8 @@ from flask_login import UserMixin
 import hashlib
 import bleach
 from flask import  request, current_app
-from flask_login import login_user
-# from ..models import user
+
+
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from markdown import markdown
 
