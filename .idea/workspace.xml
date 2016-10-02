@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="25881402-84b1-41d8-958d-06e0046c156f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/manage.py" afterPath="$PROJECT_DIR$/manage.py" />
     </list>
     <ignored path="python-blog.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -80,16 +81,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/api_1_0/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" column="93" selection-start-line="14" selection-start-column="93" selection-end-line="14" selection-end-column="93" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="_comment.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/templates/talks/_comment.html">
           <provider selected="true" editor-type-id="text-editor">
@@ -110,12 +101,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NOTE.txt" pinned="false" current-in-tab="true">
+      <file leaf-file-name="NOTE.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NOTE.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="24" column="8" selection-start-line="24" selection-start-column="8" selection-end-line="24" selection-end-column="8" />
+            <state relative-caret-position="306">
+              <caret line="26" column="28" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="manage.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/manage.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="14" column="69" selection-start-line="14" selection-start-column="69" selection-end-line="14" selection-end-column="69" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -154,7 +157,6 @@
         <option value="$PROJECT_DIR$/requiremnts.txt" />
         <option value="$PROJECT_DIR$/app/auth/login.html" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/manage.py" />
         <option value="$PROJECT_DIR$/app/auth/forms.py" />
         <option value="$PROJECT_DIR$/app/auth/routes.py" />
         <option value="$PROJECT_DIR$/app/templates/talks/_talks.html" />
@@ -177,6 +179,7 @@
         <option value="$PROJECT_DIR$/app/talks/routes.py" />
         <option value="$PROJECT_DIR$/app/email.py" />
         <option value="$PROJECT_DIR$/NOTE.txt" />
+        <option value="$PROJECT_DIR$/manage.py" />
       </list>
     </option>
   </component>
@@ -656,13 +659,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manage.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/auth/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -843,9 +839,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/NOTE.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="24" column="8" selection-start-line="24" selection-start-column="8" selection-end-line="24" selection-end-column="8" />
+        <state relative-caret-position="306">
+          <caret line="26" column="28" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="14" column="69" selection-start-line="14" selection-start-column="69" selection-end-line="14" selection-end-column="69" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
