@@ -1,0 +1,3 @@
+its dangerous-armin,flask author
+
+produces an encrypted dictionary that can only be decrypted using secret key

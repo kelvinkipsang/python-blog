@@ -3,10 +3,10 @@ from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-from flask import render_template,redirect, request, url_for, flash
+from flask import render_template,redirect, request, url_for, flash,current_app
 from flask_login import login_user
 # from ..models import user
-
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 class Talk(db.Model):
@@ -42,6 +42,22 @@ class User(UserMixin, db.Model):            #f-login uses usermixn class,which p
     avatar_hash = db.Column(db.String(32))
     talks = db.relationship('Talk', backref='author', lazy='dynamic')  #lazy makes talks query not list
     comments = db.relationship('Comment', lazy='dynamic', backref='author')
+
+    def get_api_token(self, expiration=300):            #produces a token for user,5min exp,
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'user': self.id}).decode('utf-8')
+
+    @staticmethod
+    def validate_api_token(token):                      #decodes token(inside token is a user id),finds and loads user
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        id = data.get('user')
+        if id:
+            return User.query.get(id)
+        return None
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
