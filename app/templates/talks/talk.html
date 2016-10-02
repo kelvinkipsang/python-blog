@@ -18,17 +18,22 @@
     {% endif %}
 </div>
 {% if comments %}
-    <h3 id="comments">Comments</h3>
-    {% include "talks/_comments.html" %}
+<h3 id="comments">Comments</h3>
+{% include "talks/_comments.html" %}
+
 {% endif %}
 <h3 id="comment-form">Write a comment</h3>
 {{ wtf.quick_form(form, action='#comment-form') }}
-
-
-
 {% endblock %}
 
-{% blockscripts %}
+{% block scripts %}
 {{ super() }}
-{{ moment.include_pagedown() }}       <!-- function that pagedown provides that incorporates js scripts into your code-->
+{{ pagedown.include_pagedown() }}
+<script src="http://cdnjs.cloudflare.com/ajax/libs/autosize.js/1.18.1/jquery.autosize.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#flask-pagedown-body').autosize();
+    });
+</script>
+{% include "_api_client.html" %}
 {% endblock %}
