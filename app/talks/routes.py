@@ -10,8 +10,13 @@ from .forms import ProfileForm, TalkForm, CommentForm, PresenterCommentForm
 
 @talks.route('/')
 def index():
-    talk_list = Talk.query.order_by(Talk.date.desc()).all()
-    return render_template('talks/index.html', talks=talk_list)
+    page = request.args.get('page', 1, type=int)
+    pagination = Talk.query.order_by(Talk.date.desc()).paginate(
+        page, per_page=current_app.config['TALKS_PER_PAGE'],
+        error_out=False)
+    talk_list = pagination.items
+    return render_template('talks/index.html', talks=talk_list,
+                           pagination=pagination)
 
 @talks.route('/user/<username>')
 def user(username):
