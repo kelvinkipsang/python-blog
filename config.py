@@ -11,7 +11,7 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_SENDER') or 'nobody@example.com'
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_SENDER') or 'kipkip@example.com'
     MAIL_FLUSH_INTERVAL = 3600  # one hour
     MAIL_ERROR_RECIPIENT = os.environ.get('MAIL_ERROR_RECIPIENT')
 
@@ -32,11 +32,10 @@ class ProductionConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 #dictionary placing configs in an easy to use structure
-config = {
+confi = {
     'development': DevelopmentConfig,
-    'testing':TestingConfig,
-    'production':ProductionConfig,
-
+    'testing': TestingConfig,
+    'production': ProductionConfig,
     'default': DevelopmentConfig
 }
 

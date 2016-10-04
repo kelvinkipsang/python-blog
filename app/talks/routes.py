@@ -1,12 +1,14 @@
-from flask import render_template, flash,abort,request, current_app
-from . import talks
-from ..models import User, Talk, Comment, PendingEmail
-#instead of creating a global app,im creating a global blueprint and placing routes in it
-from flask_login import  login_required,current_user,redirect,url_for
-
+from flask import render_template, flash, redirect, url_for, abort, \
+    request, current_app
+from flask_login import login_required, current_user
 from .. import db
-from .forms import ProfileForm, TalkForm, CommentForm, PresenterCommentForm
+from ..models import User, Talk, Comment, PendingEmail
 from ..email import send_author_notification, send_comment_notification
+from . import talks
+from .forms import ProfileForm, TalkForm, CommentForm, PresenterCommentForm
+
+
+# instead of creating a global app,im creating a global blueprint and placing routes in it
 
 @talks.route('/')
 def index():
@@ -18,12 +20,17 @@ def index():
     return render_template('talks/index.html', talks=talk_list,
                            pagination=pagination)
 
+
 @talks.route('/user/<username>')
 def user(username):
-
-    user = User.query.filter_by(username=username).first_or_404()
-    talk_list = user.talks.order_by(Talk.date.desc()).all()         #from rship in models...loading user from db
-    return render_template('talks/user.html', user=user, talks=talk_list) #sending argument user to tmeplate user.html
+    user = User.query.filter_by(username=username).first_or_404()  # from rship in models...loading user from db
+    page = request.args.get('page', 1, type=int)
+    pagination = user.talks.order_by(Talk.date.desc()).paginate(
+        page, per_page=current_app.config['TALKS_PER_PAGE'],
+        error_out=False)
+    talk_list = pagination.items
+    return render_template('talks/user.html', user=user, talks=talk_list,
+                           pagination=pagination)  # sending argument user to tmeplate user.html
 
 
 @talks.route('/profile', methods=['GET', 'POST'])
@@ -43,42 +50,18 @@ def profile():
     form.bio.data = current_user.bio
     return render_template('talks/profile.html', form=form)
 
+
 @talks.route('/new', methods=['GET', 'POST'])
 @login_required
 def new_talk():
     form = TalkForm()
     if form.validate_on_submit():
-        talk = Talk(title=form.title.data,
-                    description=form.description.data,
-                    slides=form.slides.data,
-                    video=form.video.data,
-                    venue=form.venue.data,
-                    venue_url=form.venue_url.data,
-                    date=form.date.data,
-                    author=current_user)
-
+        talk = Talk(author=current_user)
+        form.to_model(talk)
         db.session.add(talk)
         db.session.commit()
         flash('The talk was added successfully.')
         return redirect(url_for('.index'))
-    return render_template('talks/edit_talk.html', form=form)
-
-
-
-@talks.route('/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_talk(id):
-    talk = Talk.query.get_or_404(id)
-    if not current_user.is_admin and talk.author != current_user:
-        abort(403)
-    form = TalkForm()
-    if form.validate_on_submit():
-        form.to_model(talk)
-        db.session.add(talk)
-        db.session.commit()
-        flash('The talk was updated successfully.')
-        return redirect(url_for('.talk', id=talk.id))
-    form.from_model(talk)
     return render_template('talks/edit_talk.html', form=form)
 
 
@@ -101,7 +84,6 @@ def talk(id):
                               author_name=form.name.data,
                               author_email=form.email.data,
                               notify=form.notify.data, approved=False)
-
     if comment:
         db.session.add(comment)
         db.session.commit()
@@ -130,6 +112,24 @@ def talk(id):
                            comments=comments, pagination=pagination), \
            200, headers
 
+
+@talks.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_talk(id):
+    talk = Talk.query.get_or_404(id)
+    if not current_user.is_admin and talk.author != current_user:
+        abort(403)
+    form = TalkForm()
+    if form.validate_on_submit():
+        form.to_model(talk)
+        db.session.add(talk)
+        db.session.commit()
+        flash('The talk was updated successfully.')
+        return redirect(url_for('.talk', id=talk.id))
+    form.from_model(talk)
+    return render_template('talks/edit_talk.html', form=form)
+
+
 @talks.route('/moderate')
 @login_required
 def moderate():
@@ -144,6 +144,7 @@ def moderate_admin():
         abort(403)
     comments = Comment.for_moderation().order_by(Comment.timestamp.asc())
     return render_template('talks/moderate.html', comments=comments)
+
 
 @talks.route('/unsubscribe/<token>')
 def unsubscribe(token):

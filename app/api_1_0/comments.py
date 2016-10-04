@@ -1,19 +1,20 @@
-from flask import jsonify
-from . import api
-from .errors import forbidden, bad_request
-from ..models import Comment
+from flask import jsonify, g
 from .. import db
+from ..models import Comment
+from ..email import send_comment_notification
+
+from . import api
+from .error import forbidden, bad_request
+
 
 @api.route('/comments/<int:id>', methods=['PUT'])
 def approve_comment(id):
     comment = Comment.query.get_or_404(id)
-
-    if comment.talk.author != g.current_user and not g.current_user.is_admin:
+    if comment.talk.author != g.current_user and \
+            not g.current_user.is_admin:
         return forbidden('You cannot modify this comment.')
-
     if comment.approved:
         return bad_request('Comment is already approved.')
-
     comment.approved = True
     db.session.add(comment)
     db.session.commit()
@@ -23,14 +24,12 @@ def approve_comment(id):
 
 @api.route('/comments/<int:id>', methods=['DELETE'])
 def delete_comment(id):
-    comment = Comment.query.get_or_404(id)              #g.user is set in the before request method(tokens)
-
-    if comment.talk.author != g.current_user and not g.current_user.is_admin:
+    comment = Comment.query.get_or_404(id)                          #g.user is set in the before request method(tokens)
+    if comment.talk.author != g.current_user and \
+            not g.current_user.is_admin:
         return forbidden('You cannot modify this comment.')
-
     if comment.approved:
         return bad_request('Comment is already approved.')
-
     db.session.delete(comment)
     db.session.commit()
     return jsonify({'status': 'ok'})

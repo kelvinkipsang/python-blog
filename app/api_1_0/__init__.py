@@ -1,9 +1,10 @@
-from flask import Blueprint, g
+from flask import Blueprint, request, g
 
 api = Blueprint('api', __name__)
 
-from . import comments,error
-from flask import request
+from ..models import User
+from . import comments, error
+
 
 @api.before_request
 def before_api_request():
@@ -16,4 +17,3 @@ def before_api_request():
     if not user:
         return error.unauthorized('Invalid authentication token.')
     g.current_user = user
-

@@ -2,7 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, TextAreaField, BooleanField, SubmitField
 from wtforms.validators import Optional, Length, DataRequired, URL, Email
 from wtforms.fields.html5 import DateField
-from flask.ext.pagedown.fields import PageDownField
+from flask_pagedown.fields import PageDownField
 
 class ProfileForm(Form):
     name = StringField('Name', validators=[Optional(), Length(1, 64)])
