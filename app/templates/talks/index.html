@@ -1,7 +1,10 @@
 {% extends "base.html" %}
-{% include "talks/_talks.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles1.css') }}">
+{% endblock %}
 {% block page_content %}
-
+{% include "talks/_talks.html" %}
 {% if talks %}
 <ul class="pager">
     {% if pagination.has_prev %}
@@ -16,5 +19,14 @@
     {% endif %}
 </ul>
 {% endif %}
+<br/><br/><br/>
+<h1 class="ano">CONTACT FORM</h1>
+<form id="form" class="topBefore">
 
+		  <input id="name" type="text" placeholder="NAME">
+		  <input id="email" type="text" placeholder="E-MAIL">
+		  <textarea id="message" type="text" placeholder="MESSAGE"></textarea>
+  <input id="submit" type="submit" value="GO!">
+
+</form>
 {% endblock %}
